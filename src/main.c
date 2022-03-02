@@ -2,6 +2,8 @@
   ******************************************************************************
   * @file           : example.c
   * @brief          : Main program body
+  * Taking the advantage of a SIM800L and a IR proximity sensor to aleret any
+  * touch to sensor by calling a number
   ******************************************************************************
   *
   * COPYRIGHT(c) 2022 Faradars
@@ -40,12 +42,12 @@
 #include "hardware/uart.h"
 #include "hardware/gpio.h"
 #include "../lib/sim800l.h"
-
+#include "hardware/irq.h"
 /* USER CODE BEGIN Includes */
 
 /* variables ---------------------------------------------------------*/
 #define USER_LED_PIN 25
-
+#define SENSOR_PIN 20
 /* variables ---------------------------------------------------------*/
 
 
@@ -53,11 +55,14 @@
 void GPIO_Conf_(void);
 void UART_Conf(void);
 void Task1(void);
-char sendbuffer[20]; 
+
 /* function prototypes -----------------------------------------------*/
 
 /* USER CODE BEGIN 0 */
-
+void gpio_callback(uint gpio, uint32_t events) {
+    if(gpio==SENSOR_PIN)
+    callNumber();
+}
 /* USER CODE END 0 */
 
 /**
@@ -74,15 +79,16 @@ char sendbuffer[20];
     printf("configuring pins...\n");
     UART_Conf();
     printf("UART is initialized!\n");
-
+    gpio_set_irq_enabled_with_callback(SENSOR_PIN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
 	/* Infinit While--------------------------------------------------------------*/
   
 		while(1) {
 
       getStatus();
-      //senddata(sendbuffer);
-      if(readUART1()==1)
-      Task1();
+      uint8_t flag=readUART1();
+      if(flag==1) {
+        Task1();
+      }
       sleep_ms(1000);
 
     }

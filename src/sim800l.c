@@ -41,87 +41,30 @@
 #include <string.h>
 #include <stdio.h>
 /* Variables ------------------------------------------------------------------*/
-const uint8_t Send_Mesage[]= "ATD09224019403;\r\n";
+const uint8_t NUMBER[]= "ATD09224019403;\r\n";
+static_assert(sizeof(NUMBER)==18,"[ADD YOUR PHONE NUMBER]: in NUMBER[]"); 
 char readbuffer[20];
-//memset (readbuffer,'-',20);
-char *pointer=&readbuffer[0];
-
+uint8_t flag=0;
 /* Functions ------------------------------------------------------------------*/
 
 /**
-  * @brief  Calling the number that is given in Send_Mesage[]
+  * @brief  Calling the number that is given in NUMBER[]
   *
   * @retval None
   */
   
-uint8_t callNumber(void) {
-	uint8_t i=0;
+void callNumber(void) {
 	if( uart_is_writable(SIM800_UART)) {
-		uart_write_blocking(SIM800_UART,Send_Mesage,sizeof(Send_Mesage));
-	}
-    while(uart_is_readable(uart1)) {
-      readbuffer[i]=uart_getc(SIM800_UART);
-      i++;
-    }
-    i++;
-    readbuffer[i]='0';
-    if(true)
-    return 1;
-    if(false)
-    return 0;
-}
-
-/**
-  * @brief  Calling the number that is given in Send_Mesage[]
-  *
-  * @retval None
-  */
-  
-char* readSMS(void) {
-	uint8_t i=0;
-	if( uart_is_writable(SIM800_UART)) {
-    uart_write_blocking(SIM800_UART,"AT+CMGF=1\r",sizeof("AT+CMGF=1\r"));
+		uart_write_blocking(SIM800_UART,NUMBER,sizeof(NUMBER));
   }  
-        while(uart_is_readable(uart1)) {
-      readbuffer[i]=uart_getc(SIM800_UART);
-      i++;
-    }
-    i++;
-    readbuffer[i]='0';
-
-    return 0;
+  readUART1();
 }
 
 /**
-  * @brief  Getting signal quality
+  * @brief:  	AT command returns OK which implies that the 
+  * communication between the device and the application has been verified.
   *
-  * @retval None
-  */
-  
-char * signalquality(void) {
-	uint8_t i=0;
-	if( uart_is_writable(SIM800_UART)) {
-    uart_write_blocking(SIM800_UART,"AT+CSQ\r\n",sizeof("AT+CSQ\r\n"));
-  }
-    
-    while(uart_is_readable(uart1)) {
-      readbuffer[i]=uart_getc(SIM800_UART);
-      i++;
-    }
-    i++;
-    readbuffer[i]='0';
-    return pointer;
-}
-
-/**
-  * @brief  Getting signal quality
-  *
-  * @retval:
- 0 Ready (MT allows commands from TA/TE)
- 2 Unknown (MT is not guaranteed to respond to tructions)
- 3 Ringing (MT is ready for commands from TA/TE, but the ringer is active)
- 4 Call in progress
- 5 asleep
+  * @retval:Null
   */
   
 void getStatus(void) {
@@ -132,70 +75,23 @@ void getStatus(void) {
 readUART1();
 }
 
-/**
-  * @brief  Getting signal quality
+ /**
+  * @brief  Read UART1 Msgs
   *
-  * @retval None
-  */
-  
-// void readSms(uint8_t index){
-//   SIM.print (F("AT+CMGF=1\r")); 
-//   if (( _readSerial().indexOf("ER")) ==-1) {
-//     SIM.print (F("AT+CMGR="));
-//     SIM.print (index);
-//     SIM.print("\r");
-//     _buffer=_readSerial();
-//     if (_buffer.indexOf("CMGR:")!=-1){
-//       return _buffer;
-//     }
-//     else return "";    
-//     }
-//   else
-//     return "";
-// }
+  * @retval Flag==0-> Not get OK
+  * Flag==1-> Get Ok
+  */ 
 
-/**
-  * @brief  Getting signal quality
-  *
-  * @retval None
-  */
-  
-uint8_t delallSMS(void) {
-  uint8_t i=0;
-  	if (uart_is_writable(SIM800_UART)) {
-    uart_write_blocking(SIM800_UART,"at+cmgda=\"del all\"\n\r",sizeof("at+cmgda=\"del all\"\n\r"));
-    }
-    if (uart_is_readable(SIM800_UART)) {
-		  uart_read_blocking(SIM800_UART,readbuffer,sizeof(readbuffer));
-    }
-        while(uart_is_readable(uart1)) {
-      readbuffer[i]=uart_getc(SIM800_UART);
-      i++;
-    }
-    i++;
-    readbuffer[i]='0';
-    if(true)
-    return 1;
-    if(false)
-    return 0;
-}
-      
-//
-//void delAllSms(){ 
-//   SIM.print(F("at+cmgda=\"del all\"\n\r"));
-//   _buffer=_readSerial();
-//   if (_buffer.indexOf("OK")!=-1) {return true;}else {return false;}
-  
-// }
 uint8_t readUART1(void) {
   uint8_t counter=0;
-  uint8_t flag=0;
+  
       while(uart_is_readable(uart1)) {
-      readbuffer[counter]=uart_getc(SIM800_UART);
-      printf("%c",readbuffer[counter]);
-      if(readbuffer[counter]=='O')
-      flag=1;
-      counter++;
-    }
-    return flag;
+        readbuffer[counter]= uart_getc(SIM800_UART);
+        printf("%c",readbuffer[counter]);
+        if(readbuffer[counter]=='O') {
+          flag=1;
+        }
+        counter++;
+      } 
+  return flag;
 }

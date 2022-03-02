@@ -15,7 +15,7 @@ target_include_directories(sim800
         ${CMAKE_CURRENT_LIST_DIR}/../
         ${PROJECT_SOURCE_DIR}/lib
 )
-target_link_libraries(sim800 PUBLIC pico_stdlib hardware_uart hardware_gpio)
+target_link_libraries(sim800 PUBLIC pico_stdlib hardware_uart hardware_gpio hardware_irq)
 
 pico_enable_stdio_usb(sim800 0) 
 pico_enable_stdio_uart(sim800 1) 
