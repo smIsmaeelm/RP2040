@@ -38,11 +38,14 @@
 
 #include "hardware/uart.h"
 #include "../lib/sim800l.h"
-
+#include <string.h>
+#include <stdio.h>
 /* Variables ------------------------------------------------------------------*/
 const uint8_t Send_Mesage[]= "ATD09224019403;\r\n";
-char readbuffer[100];
+char readbuffer[20];
+//memset (readbuffer,'-',20);
 char *pointer=&readbuffer[0];
+
 /* Functions ------------------------------------------------------------------*/
 
 /**
@@ -51,14 +54,21 @@ char *pointer=&readbuffer[0];
   * @retval None
   */
   
-void callNumber(void) {
-	
+uint8_t callNumber(void) {
+	uint8_t i=0;
 	if( uart_is_writable(SIM800_UART)) {
 		uart_write_blocking(SIM800_UART,Send_Mesage,sizeof(Send_Mesage));
 	}
-      if (uart_is_readable(SIM800_UART)) {
-		  uart_read_blocking(SIM800_UART,readbuffer,sizeof(readbuffer));
+    while(uart_is_readable(uart1)) {
+      readbuffer[i]=uart_getc(SIM800_UART);
+      i++;
     }
+    i++;
+    readbuffer[i]='0';
+    if(true)
+    return 1;
+    if(false)
+    return 0;
 }
 
 /**
@@ -67,14 +77,19 @@ void callNumber(void) {
   * @retval None
   */
   
-char readSMS(void) {
-	
+char* readSMS(void) {
+	uint8_t i=0;
 	if( uart_is_writable(SIM800_UART)) {
     uart_write_blocking(SIM800_UART,"AT+CMGF=1\r",sizeof("AT+CMGF=1\r"));
   }  
-    if (uart_is_readable(SIM800_UART)) {
-		  uart_read_blocking(SIM800_UART,readbuffer,sizeof(readbuffer));
+        while(uart_is_readable(uart1)) {
+      readbuffer[i]=uart_getc(SIM800_UART);
+      i++;
     }
+    i++;
+    readbuffer[i]='0';
+
+    return 0;
 }
 
 /**
@@ -83,14 +98,19 @@ char readSMS(void) {
   * @retval None
   */
   
-void signalquality(void) {
-	
+char * signalquality(void) {
+	uint8_t i=0;
 	if( uart_is_writable(SIM800_UART)) {
     uart_write_blocking(SIM800_UART,"AT+CSQ\r\n",sizeof("AT+CSQ\r\n"));
   }
-    if (uart_is_readable(SIM800_UART)) {
-		uart_read_blocking(SIM800_UART,readbuffer,sizeof(readbuffer));
-	}
+    
+    while(uart_is_readable(uart1)) {
+      readbuffer[i]=uart_getc(SIM800_UART);
+      i++;
+    }
+    i++;
+    readbuffer[i]='0';
+    return pointer;
 }
 
 /**
@@ -104,23 +124,13 @@ void signalquality(void) {
  5 asleep
   */
   
-char *getCallStatus(void) {
-uint8_t i=0;
+void getStatus(void) {
+
 	if( uart_is_writable(SIM800_UART)) {
-    // uart_write_blocking(SIM800_UART,"AT+CPAS\r\n",sizeof("AT+CPAS\r\n"));
-    uart_write_blocking(SIM800_UART,"AT\r\n",sizeof("AT\r\n"));
+   uart_write_blocking(SIM800_UART,"AT\r\n",sizeof("AT\r\n"));
   }  
-    while(uart_is_readable(uart1)) {
-		  // uart_read_blocking(SIM800_UART,readbuffer,sizeof(readbuffer));
-      
-      readbuffer[i]=uart_getc(SIM800_UART);
-      i++;
-    }
-    i++;
-    readbuffer[i]='0';
-    return pointer;
+readUART1();
 }
-  // return _buffer.substring(_buffer.indexOf("+CPAS: ")+7,_buffer.indexOf("+CPAS: ")+9).toInt();
 
 /**
   * @brief  Getting signal quality
@@ -151,12 +161,22 @@ uint8_t i=0;
   */
   
 uint8_t delallSMS(void) {
+  uint8_t i=0;
   	if (uart_is_writable(SIM800_UART)) {
     uart_write_blocking(SIM800_UART,"at+cmgda=\"del all\"\n\r",sizeof("at+cmgda=\"del all\"\n\r"));
     }
     if (uart_is_readable(SIM800_UART)) {
 		  uart_read_blocking(SIM800_UART,readbuffer,sizeof(readbuffer));
     }
+        while(uart_is_readable(uart1)) {
+      readbuffer[i]=uart_getc(SIM800_UART);
+      i++;
+    }
+    i++;
+    readbuffer[i]='0';
+    if(true)
+    return 1;
+    if(false)
     return 0;
 }
       
@@ -167,3 +187,15 @@ uint8_t delallSMS(void) {
 //   if (_buffer.indexOf("OK")!=-1) {return true;}else {return false;}
   
 // }
+uint8_t readUART1(void) {
+  uint8_t counter=0;
+  uint8_t flag=0;
+      while(uart_is_readable(uart1)) {
+      readbuffer[counter]=uart_getc(SIM800_UART);
+      printf("%c",readbuffer[counter]);
+      if(readbuffer[counter]=='O')
+      flag=1;
+      counter++;
+    }
+    return flag;
+}

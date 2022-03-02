@@ -45,10 +45,11 @@
 #define SIM800_UART uart1
  
 /* Functions ------------------------------------------------------------------*/
-void callNumber(void);
-char readSMS(void);
-void signalquality(void);
-char *getCallStatus(void);
+uint8_t callNumber(void);
+char *readSMS(void);
+char *signalquality(void);
+void getStatus(void);
 uint8_t delallSMS(void);
+uint8_t readUART1(void);
 
 #endif

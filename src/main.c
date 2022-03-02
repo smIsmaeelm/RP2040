@@ -53,7 +53,7 @@
 void GPIO_Conf_(void);
 void UART_Conf(void);
 void Task1(void);
-
+char sendbuffer[20]; 
 /* function prototypes -----------------------------------------------*/
 
 /* USER CODE BEGIN 0 */
@@ -78,28 +78,13 @@ void Task1(void);
 	/* Infinit While--------------------------------------------------------------*/
   
 		while(1) {
-        //Read SMS
-        //Check SMS
-        //Delete SMS
-        //do the task
-        //CallNumber
 
-        // char DATA[]= readSMS();
-        // while(DATA[]!="OFF");
-        // delallSMS();
-      //  callNumber();
-      char *data=getCallStatus();
-      while(*data!='0'){
-      printf("%c",*data);
-      data++;
-      }
-        Task1();
-       // printf("I'll call you soon!\n");
-        sleep_ms(1000);
-        
-        // if(getCallStatus()!=1) {
-        //   callNumber();
-        // }
+      getStatus();
+      //senddata(sendbuffer);
+      if(readUART1()==1)
+      Task1();
+      sleep_ms(1000);
+
     }
 
   }
