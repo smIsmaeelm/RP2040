@@ -23,13 +23,13 @@
 	*/
 /*
   PINOUT: 
- *        _____________________________
+ *        ___________________________
  *       |  RP2040 >>>   SIM800L  |
- *        -----------------------------
- *            GND      >>>   GND
- *        RX  10       >>>   TX    
- *        TX  11       >>>   RX
- *       RESET 2       >>>   RST 
+ *        ---------------------------
+ *        GND        >>>     GND
+ *        RX   5     >>>     TX    
+ *        TX   4     >>>     RX
+ *       RESET 3     >>>     RST 
  *                 
  *   POWER SOURCE 4.2V >>> VCC
  */
@@ -40,14 +40,15 @@
 #define _sim800l_h_
 
 /* Defines ------------------------------------------------------------------*/
-#define RX_PIN 7
-#define TX_PIN 6	
+#define RX_PIN 5
+#define TX_PIN 4	
 #define SIM800_UART uart1
+ 
 /* Functions ------------------------------------------------------------------*/
 void callNumber(void);
 char readSMS(void);
 void signalquality(void);
-char getCallStatus(void);
+char *getCallStatus(void);
 uint8_t delallSMS(void);
 
 #endif

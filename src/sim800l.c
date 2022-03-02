@@ -23,13 +23,13 @@
 	*/
 /*
   PINOUT: 
- *        _____________________________
+ *        ___________________________
  *       |  RP2040 >>>   SIM800L  |
- *        -----------------------------
- *            GND      >>>   GND
- *        RX  10       >>>   TX    
- *        TX  11       >>>   RX
- *       RESET 2       >>>   RST 
+ *        ---------------------------
+ *        GND        >>>     GND
+ *        RX   5     >>>     TX    
+ *        TX   4     >>>     RX
+ *       RESET 3     >>>     RST 
  *                 
  *   POWER SOURCE 4.2V >>> VCC
  */
@@ -40,8 +40,9 @@
 #include "../lib/sim800l.h"
 
 /* Variables ------------------------------------------------------------------*/
-const uint8_t Send_Mesage[]= "ATD09125972430;\r\n";
+const uint8_t Send_Mesage[]= "ATD09224019403;\r\n";
 char readbuffer[100];
+char *pointer=&readbuffer[0];
 /* Functions ------------------------------------------------------------------*/
 
 /**
@@ -55,6 +56,9 @@ void callNumber(void) {
 	if( uart_is_writable(SIM800_UART)) {
 		uart_write_blocking(SIM800_UART,Send_Mesage,sizeof(Send_Mesage));
 	}
+      if (uart_is_readable(SIM800_UART)) {
+		  uart_read_blocking(SIM800_UART,readbuffer,sizeof(readbuffer));
+    }
 }
 
 /**
@@ -92,21 +96,29 @@ void signalquality(void) {
 /**
   * @brief  Getting signal quality
   *
-  * @retval  0 Ready (MT allows commands from TA/TE)
+  * @retval:
+ 0 Ready (MT allows commands from TA/TE)
  2 Unknown (MT is not guaranteed to respond to tructions)
  3 Ringing (MT is ready for commands from TA/TE, but the ringer is active)
  4 Call in progress
+ 5 asleep
   */
   
-char getCallStatus(void) {
-
+char *getCallStatus(void) {
+uint8_t i=0;
 	if( uart_is_writable(SIM800_UART)) {
-    uart_write_blocking(SIM800_UART,"AT+CPAS\r\n",sizeof("AT+CPAS\r\n"));
+    // uart_write_blocking(SIM800_UART,"AT+CPAS\r\n",sizeof("AT+CPAS\r\n"));
+    uart_write_blocking(SIM800_UART,"AT\r\n",sizeof("AT\r\n"));
   }  
-    if (uart_is_readable(SIM800_UART)) {
-		  uart_read_blocking(SIM800_UART,readbuffer,sizeof(readbuffer));
+    while(uart_is_readable(uart1)) {
+		  // uart_read_blocking(SIM800_UART,readbuffer,sizeof(readbuffer));
+      
+      readbuffer[i]=uart_getc(SIM800_UART);
+      i++;
     }
-    return 0;
+    i++;
+    readbuffer[i]='0';
+    return pointer;
 }
   // return _buffer.substring(_buffer.indexOf("+CPAS: ")+7,_buffer.indexOf("+CPAS: ")+9).toInt();
 

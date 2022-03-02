@@ -84,19 +84,26 @@ void Task1(void);
         //do the task
         //CallNumber
 
-        char DATA[]= readSMS();
-        while(DATA[]!="OFF");
-        delallSMS();
-        callNumber();
+        // char DATA[]= readSMS();
+        // while(DATA[]!="OFF");
+        // delallSMS();
+      //  callNumber();
+      char *data=getCallStatus();
+      while(*data!='0'){
+      printf("%c",*data);
+      data++;
+      }
         Task1();
-        printf("I'll call you soon!\n");
-        if(getCallStatus()!=1) {
-          callNumber();
-        }
+       // printf("I'll call you soon!\n");
+        sleep_ms(1000);
+        
+        // if(getCallStatus()!=1) {
+        //   callNumber();
+        // }
     }
 
   }
-  
+
 /**
   * @brief  Setting GPIOS
   *
@@ -115,8 +122,11 @@ void Task1(void);
   * @retval None
   */
  void UART_Conf(void) {
+       uint8_t uart_flag=0; //true if the UART is enabled
        uart_init(SIM800_UART,115200);
-       uart_is_enabled(SIM800_UART);
+      uart_flag = uart_is_enabled(SIM800_UART);
+     // while(!uart_flag);
+uart_set_fifo_enabled(SIM800_UART, true);
   } 
 
   /**
@@ -124,7 +134,7 @@ void Task1(void);
   *
   * @retval None
   */
-  void Task(void) {
+  void Task1(void) {
     gpio_put(USER_LED_PIN, true);
   }
  	 /* End Code----------------------------------------------------------*/	
