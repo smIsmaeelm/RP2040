@@ -29,7 +29,7 @@
  *        GND        >>>     GND
  *        RX   5     >>>     TX    
  *        TX   4     >>>     RX
- *       RESET 3     >>>     RST 
+ *        GND 3     >>>     GND 
  *                 
  *   POWER SOURCE 4.2V >>> VCC
  */

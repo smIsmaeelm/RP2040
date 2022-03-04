@@ -26,10 +26,10 @@
  *        ___________________________
  *       |  RP2040 >>>   SIM800L  |
  *        ---------------------------
- *        GND        >>>     GND
+ *        GND  3     >>>     GND
  *        RX   5     >>>     TX    
  *        TX   4     >>>     RX
- *       RESET 3     >>>     RST 
+ * 
  *                 
  *   POWER SOURCE 4.2V >>> VCC
  */
@@ -41,7 +41,7 @@
 #include <string.h>
 #include <stdio.h>
 /* Variables ------------------------------------------------------------------*/
-const uint8_t NUMBER[]= "ATD09224019403;\r\n";
+const uint8_t NUMBER[]= "ATD09357918827;\r\n";
 static_assert(sizeof(NUMBER)==18,"[ADD YOUR PHONE NUMBER]: in NUMBER[]"); 
 char readbuffer[20];
 uint8_t flag=0;

@@ -113,11 +113,10 @@ void gpio_callback(uint gpio, uint32_t events) {
   * @retval None
   */
  void UART_Conf(void) {
-       uint8_t uart_flag=0; //true if the UART is enabled
-       uart_init(SIM800_UART,115200);
-      uart_flag = uart_is_enabled(SIM800_UART);
-     // while(!uart_flag);
-uart_set_fifo_enabled(SIM800_UART, true);
+
+    uart_init(SIM800_UART,115200);
+    uart_is_enabled(SIM800_UART);
+    uart_set_fifo_enabled(SIM800_UART, true);
   } 
 
   /**
